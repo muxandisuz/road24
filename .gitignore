@@ -34,3 +34,9 @@ tests/_support/_generated
 
 #vagrant folder
 /.vagrant
+
+#db.php
+/config/db.php
+
+#.osp
+.osp

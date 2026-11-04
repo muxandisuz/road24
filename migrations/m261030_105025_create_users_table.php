@@ -26,8 +26,8 @@ class m261030_105025_create_users_table extends Migration
             'address' => $this->text(),
             'passport_number' => $this->string(30)->unique(),
             'status' => $this->smallInteger()->notNull()->defaultValue(1),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
+            'created_at' => $this->dateTime(),
+            'updated_at' => $this->dateTime(),
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\debug\components\search\matchers\LowerThan;
 use yii\web\IdentityInterface;
 use app\components\JwtAuth;
 
@@ -45,16 +46,11 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        if ($this->password) {
-            $this->password_hash = Yii::$app->security
-                ->generatePasswordHash($this->password);
-        }
-
         if ($insert) {
-            $this->created_at = time();
+            $this->created_at = date('Y-m-d H:i:s');
         }
 
-        $this->updated_at = time();
+        $this->updated_at = date('Y-m-d H:i:s');
 
         return true;
     }
@@ -112,7 +108,7 @@ class User extends ActiveRecord implements IdentityInterface
     public static function findByUsername($username)
     {
         return static::find()
-            ->where(['username' => trim($username)])
+            ->where(['username' => trim(strtolower($username)), 'status' => 1])
             ->one();
     }
 

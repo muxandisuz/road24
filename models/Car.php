@@ -14,14 +14,11 @@ class Car extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'brand', 'model'], 'required'],
+            [['user_id', 'brand_id', 'model_id', 'color_id'], 'required'],
             [['user_id', 'year', 'mileage', 'seats', 'doors', 'status'], 'integer'],
             [['price'], 'number'],
             [['description'], 'string'],
-            [['brand', 'model'], 'string', 'max' => 100],
-            [['color'], 'string', 'max' => 50],
             [['engine_number'], 'string', 'max' => 100],
-            [['currency'], 'string', 'max' => 10],
             [['user_id'], 'exist',
                 'targetClass' => User::class,
                 'targetAttribute' => ['user_id' => 'id'],
@@ -38,13 +35,19 @@ class Car extends ActiveRecord
             return false;
         }
 
-        if ($insert) {
-            $this->created_at = time();
-        }
-
-        $this->updated_at = time();
-
         return true;
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => new Expression('CURRENT_TIMESTAMP'),
+            ],
+        ];
     }
 
     public function fields()
@@ -52,17 +55,16 @@ class Car extends ActiveRecord
         return [
             'id',
             'user_id',
-            'brand',
-            'model',
+            'brand_id',
+            'model_id',
             'year',
-            'color',
+            'color_id',
             'engine_number',
             'transmission',
             'mileage',
             'seats',
             'doors',
             'price',
-            'currency',
             'description',
             'status',
             'created_at',
