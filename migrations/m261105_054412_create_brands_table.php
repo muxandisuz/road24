@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%brands}}`.
  */
-class m261104_094630_create_brands_table extends Migration
+class m261105_054412_create_brands_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -15,6 +15,7 @@ class m261104_094630_create_brands_table extends Migration
         $this->createTable('{{%brands}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
+            'created_at' => $this->dateTime(),
         ]);
     }
 

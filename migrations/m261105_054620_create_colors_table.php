@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%colors}}`.
  */
-class m261104_094718_create_colors_table extends Migration
+class m261105_054620_create_colors_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -15,7 +15,10 @@ class m261104_094718_create_colors_table extends Migration
         $this->createTable('{{%colors}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
+            'created_at' => $this->dateTime(),
         ]);
+
+        $this->alterColumn('{{%colors}}', 'rgb_code', $this->string());
     }
 
     /**

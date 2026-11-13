@@ -3,21 +3,21 @@
 namespace app\services\CarService;
 
 use Yii;
-use app\models\Car;
+use app\models\Cars;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\UnprocessableEntityHttpException;
 
 class  CarService
 {
-    public function getCars()
+    public function index()
     {
-        $query = Car::find()
+        $query = Cars::find()
+            ->with(['brands', 'models', 'colors'])
             ->where([
                 'user_id' => Yii::$app->user->id,
                 'status' => 1
             ]);
-
 
         $request = Yii::$app->request;
 
@@ -31,11 +31,15 @@ class  CarService
 
         return [
             'success' => true,
-            'data' => $provider,
+            'dataProvider' => $provider,
         ];
-    }
 
-    public function getCar($id)
+//        $this->render('index', [
+//            'success' => true,
+//            'dataProvider' => $provider
+//        ]);q
+    }
+    public function view($id)
     {
         $model = $this->findModel($id);
 
@@ -45,9 +49,9 @@ class  CarService
         ];
     }
 
-    public function createCar()
+    public function create()
     {
-        $model = new Car();
+        $model = new Cars();
 
         $data = Yii::$app->request->bodyParams;
 
@@ -56,6 +60,8 @@ class  CarService
                 'Ma\'lumotlar yuborilmadi'
             );
         }
+
+
 
         $model->user_id = Yii::$app->user->id;
         $model->status = 1;
@@ -84,7 +90,7 @@ class  CarService
         ];
     }
 
-    public function updateCar($id)
+    public function update($id)
     {
         $model = $this->findModel($id);
 
@@ -117,7 +123,7 @@ class  CarService
         ];
     }
 
-    public function deleteCar($id)
+    public function delete($id)
     {
         $model = $this->findModel($id);
 
@@ -139,7 +145,7 @@ class  CarService
 
     protected function findModel($id)
     {
-        $model = Car::findOne([
+        $model = Cars::findOne([
             'id' => $id,
             'user_id' => Yii::$app->user->id,
             'status' => 1,

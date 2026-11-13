@@ -14,8 +14,9 @@ class BaseController extends Controller
 
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::class,
-            'except' => ['login', 'register'],
+            'except' => ['login', 'register', 'forgot-password', 'reset-password', 'test-sms'],
         ];
+
 
         return $behaviors;
     }

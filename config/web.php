@@ -25,12 +25,16 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => '7X7pWDNASp79HjqvV2faTphlbRMbwaFI',
+            'enableCsrfValidation' => false,
             'parsers' => [
                 'application/json' => [
                     'class' => 'yii\web\JsonParser',
                     'asArray' => true,
                 ],
             ],
+        ],
+        'response' => [
+            'format' => \yii\web\Response::FORMAT_JSON,
         ],
         'cache' => [
             'class' => \yii\caching\FileCache::class,
@@ -43,7 +47,17 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => \yii\mail\MailerInterface::class,
+        'mailer' => [
+            'class' => 'yii\symfonymailer\Mailer',
+            'useFileTransport' => false,
+            'transport' => [
+                'dsn' => 'smtp://'
+                    . rawurlencode('muxandisuz@gmail.com')
+                    . ':'
+                    . rawurlencode('ybdxpilwosmzcnsw')
+                    . '@smtp.gmail.com:587',
+            ],
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -64,11 +78,43 @@ $config = [
                     'controller' => [
                         'user',
                         'car',
+                        'brand',
+                        'model',
+                        'color'
                     ],
+                ],
+                [
+                    'class' => 'yii\web\UrlRule',
+                    'pattern' => 'reference/<slug:[a-z-]+>',
+                    'route' => 'reference/index',
+                    'verb' => ['GET'],
+                ],
+                [
+                    'class' => 'yii\web\UrlRule',
+                    'pattern' => 'reference/<slug:[a-z-]+>',
+                    'route' => 'reference/create',
+                    'verb' => ['POST'],
+                ],
+                [
+                    'class' => 'yii\web\UrlRule',
+                    'pattern' => 'reference/<slug:[a-z-]+>/<id:\d+>',
+                    'route' => 'reference/view',
+                    'verb' => ['GET'],
+                ],
+                [
+                    'class' => 'yii\web\UrlRule',
+                    'pattern' => 'reference/<slug:[a-z-]+>/<id:\d+>',
+                    'route' => 'reference/update',
+                    'verb' => ['PUT', 'PATCH'],
+                ],
+                [
+                    'class' => 'yii\web\UrlRule',
+                    'pattern' => 'reference/<slug:[a-z-]+>/<id:\d+>',
+                    'route' => 'reference/delete',
+                    'verb' => ['DELETE'],
                 ],
             ],
         ],
-
     ],
     'params' => $params,
 ];

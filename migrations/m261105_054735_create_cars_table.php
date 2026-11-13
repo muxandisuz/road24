@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%cars}}`.
  */
-class m261104_095226_create_cars_table extends Migration
+class m261105_054735_create_cars_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -70,6 +70,10 @@ class m261104_095226_create_cars_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('fk-cars-user_id', '{{%cars}}');
+        $this->dropForeignKey('fk-cars-brand_id', '{{%cars}}');
+        $this->dropForeignKey('fk-cars-model_id', '{{%cars}}');
+        $this->dropForeignKey('fk-cars-color_id', '{{%cars}}');
         $this->dropTable('{{%cars}}');
     }
 }

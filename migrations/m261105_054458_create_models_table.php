@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%models}}`.
  */
-class m261104_095136_create_models_table extends Migration
+class m261105_054458_create_models_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -16,14 +16,17 @@ class m261104_095136_create_models_table extends Migration
             'id' => $this->primaryKey(),
             'brand_id' => $this->integer()->notNull(),
             'name' => $this->string()->notNull(),
+            'created_at' => $this->dateTime(),
         ]);
 
         $this->addForeignKey(
-            'fk-models-brand_id',
+            'fk_models_brand_id',
             '{{%models}}',
             'brand_id',
             '{{%brands}}',
-            'id'
+            'id',
+            'set null',
+            'CASCADE'
         );
     }
 
@@ -32,6 +35,7 @@ class m261104_095136_create_models_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('fk_models_brand_id', '{{%models}}');
         $this->dropTable('{{%models}}');
     }
 }

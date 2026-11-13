@@ -4,10 +4,10 @@ namespace app\models;
 
 use yii\db\ActiveRecord;
 
-class CarColor extends ActiveRecord
+class PasswordResetToken extends ActiveRecord
 {
     public static function tableName()
     {
-        return '{{%car_colors}}';
+        return '{{%password_reset_tokens}}';
     }
 }

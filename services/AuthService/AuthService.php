@@ -3,58 +3,86 @@
 namespace app\services\AuthService;
 
 use Yii;
-use app\components\JwtAuth;
 use app\models\User;
-use yii\filters\auth\AuthInterface;
+use app\models\forms\LoginForm;
+use app\models\forms\RegisterForm;
+use app\components\JwtAuth;
 
 class AuthService
 {
-
     public function register()
     {
-        $model = new User();
-        $model->scenario = 'register';
+        $form = new RegisterForm();
 
         $data = Yii::$app->request->bodyParams;
 
-        if ($model->load($data, '')) {
-            if ($model->validate()) {
-                $model->password_hash = Yii::$app->security
-                    ->generatePasswordHash($model->password);
+        if (!$form->load($data, '') || !$form->validate()) {
+            Yii::$app->response->statusCode = 422;
 
-                $model->status = 1;
-
-                if ($model->save(false)) {
-                    return [
-                        'success' => true,
-                        'message' => 'User muvaffaqiyatli yaratildi',
-                        'user' => $model
-                    ];
-                }
-            }
+            return [
+                'success' => false,
+                'errors' => $form->errors,
+            ];
         }
 
-        Yii::$app->response->statusCode = 422;
+        $user = new User();
+
+        $user->username = $form->username;
+        $user->email = $form->email;
+
+        $user->password_hash = Yii::$app->security
+            ->generatePasswordHash($form->password);
+
+        $user->auth_key = Yii::$app->security
+            ->generateRandomString();
+
+        $user->status = 1;
+
+        if (!$user->save()) {
+            Yii::$app->response->statusCode = 422;
+
+            return [
+                'success' => false,
+                'errors' => $user->errors,
+            ];
+        }
 
         return [
-            'success' => false,
-            'errors' => $model->errors,
+            'success' => true,
+            'message' => 'User muvaffaqiyatli yaratildi',
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+            ],
+
         ];
     }
 
     public function login()
     {
+        $form = new LoginForm();
+
         $data = Yii::$app->request->bodyParams;
 
-        $username = $data['username'] ?? null;
-        $password = $data['password'] ?? null;
+        if (!$form->load($data, '') || !$form->validate()) {
+            Yii::$app->response->statusCode = 422;
 
-        $user = User::findByUsername($username);
+            return [
+                'success' => false,
+                'errors' => $form->errors,
+            ];
+        }
 
-        if (!$user || !Yii::$app->security->validatePassword(
-                $password,
+        $user = User::findByUsername($form->username);
+
+        if (
+            !$user ||
+            !Yii::$app->security->validatePassword(
+                $form->password,
                 $user->password_hash
-            )) {
+            )
+        ) {
             Yii::$app->response->statusCode = 401;
 
             return [
@@ -72,5 +100,4 @@ class AuthService
             'token_type' => 'Bearer',
         ];
     }
-
 }
